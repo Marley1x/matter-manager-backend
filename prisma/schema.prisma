@@ -11,21 +11,21 @@ datasource db {
 }
 
 model User {
-  id  String   @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  username     String             @unique
-  email        String?            @unique
-  role         Role               @default(USER)
+  id           String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  username     String    @unique
+  email        String?   @unique
+  role         Role      @default(USER)
   firstName    String
-  lastName     String 
-  abbreviation String             @unique
+  lastName     String
+  abbreviation String    @unique
   deletedAt    DateTime?
 
-  pdfJobs PdfJob[]
-  internalNotes    InternalNote[]
-  comments    Comment[]
-  assignments MatterAssignment[]
+  pdfJobs       PdfJob[]
+  internalNotes InternalNote[]
+  comments      Comment[]
+  assignments   MatterAssignment[]
 }
 
 enum Role {
@@ -34,18 +34,18 @@ enum Role {
 }
 
 model Client {
-  id  String   @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  name         String             
-  suffix       String?      
-  type         ClientType         @default(NON_ASSOCIATION)
-  deletedAt    DateTime?
+  id        String     @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  suffix    String?
+  type      ClientType @default(NON_ASSOCIATION)
+  deletedAt DateTime?
 
-  emailAddresses EmailAddress[]
-  matters      Matter[]
+  emailAddresses          EmailAddress[]
+  matters                 Matter[]
   distributionListClients DistributionListClient[]
-  emailSends EmailSend[]
+  emailSends              EmailSend[]
 }
 
 enum ClientType {
@@ -54,11 +54,11 @@ enum ClientType {
 }
 
 model EmailAddress {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  client           Client             @relation(fields: [clientId], references: [id])
-  clientId         String             @db.Uuid
+  id               String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  client           Client    @relation(fields: [clientId], references: [id])
+  clientId         String    @db.Uuid
   memberName       String
   email            String
   shouldSendReport Boolean
@@ -66,160 +66,170 @@ model EmailAddress {
 }
 
 model MatterStatus {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  status           String             @unique
-  matters          Matter[]
+  id      String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  status  String   @unique
+  matters Matter[]
 }
 
 model Matter {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  status           MatterStatus       @relation(fields: [statusId], references: [id])
-  statusId         String             @db.Uuid
-  client           Client             @relation(fields: [clientId], references: [id])
-  clientId         String             @db.Uuid
-  project          String?
-  fileNumber       String
-  closedAt         DateTime?
-  deletedAt        DateTime?
-  
-  internalNotes    InternalNote[]
-  comments    Comment[]
-  assignments MatterAssignment[]
+  id         String       @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  status     MatterStatus @relation(fields: [statusId], references: [id])
+  statusId   String       @db.Uuid
+  client     Client       @relation(fields: [clientId], references: [id])
+  clientId   String       @db.Uuid
+  project    String?
+  fileNumber String
+  closedAt   DateTime?
+  deletedAt  DateTime?
+
+  internalNotes InternalNote[]
+  comments      Comment[]
+  assignments   MatterAssignment[]
 }
 
 model InternalNote {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  note             String
-  addedByUser      User               @relation(fields: [addedBy], references: [id])
-  addedBy          String             @db.Uuid
-  matter           Matter             @relation(fields: [matterId], references: [id])
-  matterId         String             @db.Uuid
-  deletedAt        DateTime?
+  id          String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  note        String
+  addedByUser User      @relation(fields: [addedBy], references: [id])
+  addedBy     String    @db.Uuid
+  matter      Matter    @relation(fields: [matterId], references: [id])
+  matterId    String    @db.Uuid
+  deletedAt   DateTime?
 }
 
 model Comment {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  
-  comment          String
-  addedByUser      User?               @relation(fields: [addedBy], references: [id])
-  addedBy          String?             @db.Uuid
-  matter           Matter             @relation(fields: [matterId], references: [id])
-  matterId         String             @db.Uuid
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
+
+  comment     String
+  addedByUser User?   @relation(fields: [addedBy], references: [id])
+  addedBy     String? @db.Uuid
+  matter      Matter  @relation(fields: [matterId], references: [id])
+  matterId    String  @db.Uuid
 }
 
 model MatterAssignment {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  assignedBy       String?
+  id         String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt  DateTime @default(now())
+  assignedBy String?
 
-  matter           Matter             @relation(fields: [matterId], references: [id])
-  matterId         String             @db.Uuid
+  matter   Matter @relation(fields: [matterId], references: [id])
+  matterId String @db.Uuid
 
-  user           User               @relation(fields: [userId], references: [id])
-  userId         String             @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
 }
 
 model SmtpConfig {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  
-  host             String
-  port             Int
-  secure           Boolean
-  requireTLS       Boolean
-  maxConnections  Int
-  tlsRejectUnauthorized Boolean
-  tlsCiphers       String
-  service           String
-  user              String
-  pass              String
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
 
-  testEmail         String?
+  host                  String
+  port                  Int
+  secure                Boolean
+  requireTLS            Boolean
+  maxConnections        Int
+  tlsRejectUnauthorized Boolean
+  tlsCiphers            String
+  service               String
+  user                  String
+  pass                  String
+
+  testEmail String?
 }
 
 model EmailTemplate {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  name             String             @unique
-  body             String?
-  subjectPreText   String?
+  name              String  @unique
+  body              String?
+  subjectPreText    String?
   includeClientName Boolean
-  subjectPostText  String?
-  
-  deletedAt        DateTime?
+  subjectPostText   String?
+
+  deletedAt DateTime?
 
   pdfJobs PdfJob[]
 }
 
 model DistributionList {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  name             String             @unique
-  deletedAt        DateTime?
-  
+  name      String    @unique
+  deletedAt DateTime?
+
   distributionClientsList DistributionListClient[]
-  pdfJobs PdfJob[]
-
+  pdfJobs                 PdfJob[]
 }
 
 model DistributionListClient {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
 
+  deletedAt DateTime?
 
-  deletedAt        DateTime?
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String @db.Uuid
 
-  client           Client             @relation(fields: [clientId], references: [id])
-  clientId         String             @db.Uuid
-
-  distributionList           DistributionList             @relation(fields: [distributionListId], references: [id])
-  distributionListId         String             @db.Uuid
+  distributionList   DistributionList @relation(fields: [distributionListId], references: [id])
+  distributionListId String           @db.Uuid
 }
 
 model PdfJob {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  cc               String?
+  cc String?
 
-  distributionList           DistributionList             @relation(fields: [distributionListId], references: [id])
-  distributionListId         String             @db.Uuid
+  distributionList   DistributionList @relation(fields: [distributionListId], references: [id])
+  distributionListId String           @db.Uuid
 
-  emailTemplate             EmailTemplate?             @relation(fields: [emailTemplateId], references: [id])
-  emailTemplateId            String?                    @db.Uuid
+  emailTemplate   EmailTemplate? @relation(fields: [emailTemplateId], references: [id])
+  emailTemplateId String?        @db.Uuid
 
-  user                       User                      @relation(fields: [userId], references: [id])
-  userId            String                           @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @db.Uuid
 
-  type                   JobType                     @default(NO_REPORT_EMAIL)
+  type JobType @default(NO_REPORT_EMAIL)
 
-  date              String?            @default("hello world")
-  statusIds         String[]
-  emailSends        EmailSend[]
+  date       String?     @default("hello world")
+  statusIds  String[]
+  emailSends EmailSend[]
+}
+
+enum EmailSendStatus {
+  REQUESTED
+  SENT
+  FAILED
+  ATTACHMENT_GENERATED
+  ATTACHMENT_FAILED
+  LEGACY
 }
 
 model EmailSend {
-  id  String       @id                @db.Uuid @default(dbgenerated("uuid_generate_v1()"))
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  error            String?
+  error String?
 
-  pdfJob              PdfJob                    @relation(fields: [pdfJobId], references: [id])
-  pdfJobId          String                  @db.Uuid
+  status     EmailSendStatus @default(LEGACY)
+  retryCount Int             @default(0)
 
-  client            Client                    @relation(fields: [clientId], references: [id])
-  clientId          String                  @db.Uuid
+  pdfJob   PdfJob @relation(fields: [pdfJobId], references: [id])
+  pdfJobId String @db.Uuid
+
+  client   Client @relation(fields: [clientId], references: [id])
+  clientId String @db.Uuid
 }
 
 enum JobType {

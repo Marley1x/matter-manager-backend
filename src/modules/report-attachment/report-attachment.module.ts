@@ -6,9 +6,10 @@ import { ServicesModule } from 'src/services/services.module';
 import { PdfGenerationService } from './pdf-generator.service';
 import { MatterModule } from '../matters/matters.module';
 import { CommentsModule } from '../comments/comments.module';
-import { EmailOptionsRepostory } from '../admin-options/email-options.repository';
+import { EmailOptionsRepository } from '../admin-options/email-options.repository';
 import { EmailRepository } from '../emails/emails.repository';
 import { PdfModule } from '../pdf/pdf.module';
+import { ReportAttachmentService } from './report-attachment.service';
 
 @Module({
   imports: [ServicesModule, MatterModule, CommentsModule, PdfModule],
@@ -17,8 +18,9 @@ import { PdfModule } from '../pdf/pdf.module';
     ReportRepository,
     PdfGenerationService,
     PrismaClient,
-    EmailOptionsRepostory,
+    EmailOptionsRepository,
     EmailRepository,
+    ReportAttachmentService,
   ],
   exports: [ReportRepository, PdfGenerationService],
 })

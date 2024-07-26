@@ -21,7 +21,7 @@ import {
 import { transformPrismaError } from 'util/transformers';
 import { MatterStatusRepository } from './matters-status.repository';
 import { Roles } from 'src/decorators/auth.decorator';
-import { EmailOptionsRepostory } from './email-options.repository';
+import { EmailOptionsRepository } from './email-options.repository';
 import { EmailService } from 'src/services/email.service';
 
 @Roles([Role.ADMIN])
@@ -30,7 +30,7 @@ import { EmailService } from 'src/services/email.service';
 export class AdminOptionsController {
   constructor(
     private readonly matterStatusRepository: MatterStatusRepository,
-    private readonly emailOptionsRepository: EmailOptionsRepostory,
+    private readonly emailOptionsRepository: EmailOptionsRepository,
     private readonly emailService: EmailService,
   ) {}
 

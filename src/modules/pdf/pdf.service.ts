@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import puppeteer, { type Browser } from 'puppeteer';
 
 @Injectable()
-export class PdfService {
+export class PdfService implements OnModuleInit {
   private logContext = PdfService.name;
   private browser: Browser | null = null;
   private open = false;
-  private lastTimeout = null;
 
   constructor() {}
-
+  async onModuleInit() {
+    await this.init();
+  }
   async init() {
     if (this.open) {
       return;
@@ -17,26 +18,6 @@ export class PdfService {
     console.log(`[${this.logContext}]: initializing pdf service`);
     this.browser = await puppeteer.launch();
     this.open = true;
-  }
-
-  async cleanup() {
-    if (!this.open) {
-      return;
-    }
-    console.log(`[${this.logContext}]: terminating pdf service`);
-    await this.browser.close();
-    this.browser = null;
-    this.open = false;
-  }
-
-  requestCleanup() {
-    if (this.lastTimeout) {
-      clearTimeout(this.lastTimeout);
-    }
-
-    this.lastTimeout = setTimeout(async () => {
-      await this.cleanup();
-    }, 5000);
   }
 
   async htmlToPDFBuffer(parameters: { html: string }): Promise<Buffer> {
@@ -53,7 +34,6 @@ export class PdfService {
       printBackground: true, // include background colors and images
     });
     await page.close();
-    this.requestCleanup();
     return pdfBuffer;
   }
 }

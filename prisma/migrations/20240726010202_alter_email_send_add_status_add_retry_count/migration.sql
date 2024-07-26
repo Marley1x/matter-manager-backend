@@ -1,0 +1,6 @@
+-- CreateEnum
+CREATE TYPE "EmailSendStatus" AS ENUM ('REQUESTED', 'SENT', 'FAILED', 'ATTACHMENT_GENERATED', 'ATTACHMENT_FAILED', 'LEGACY');
+
+-- AlterTable
+ALTER TABLE "EmailSend" ADD COLUMN     "retryCount" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "status" "EmailSendStatus" NOT NULL DEFAULT 'LEGACY';

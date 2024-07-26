@@ -16,7 +16,7 @@ import { ReportRepository } from './report-attachment.repository';
 import { PdfGenerationService } from './pdf-generator.service';
 import { transformPrismaError } from 'util/transformers';
 import { EmailService } from 'src/services/email.service';
-import { EmailOptionsRepostory } from '../admin-options/email-options.repository';
+import { EmailOptionsRepository } from '../admin-options/email-options.repository';
 import { EmailRepository } from '../emails/emails.repository';
 import {
   Client,
@@ -26,6 +26,7 @@ import {
   JobType,
   PdfJob,
 } from '@prisma/client';
+import { ReportAttachmentService } from './report-attachment.service';
 
 @Controller('jobs')
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,8 +35,9 @@ export class ReportAttachmentController {
     private readonly pdfService: PdfGenerationService,
     private readonly reportRepository: ReportRepository,
     private readonly emailService: EmailService,
-    private readonly smtpSettings: EmailOptionsRepostory,
+    private readonly smtpSettings: EmailOptionsRepository,
     private readonly emailRepository: EmailRepository,
+    private readonly reportAttachmentService: ReportAttachmentService,
   ) {}
 
   @Get('/:jobId/sample')
@@ -79,7 +81,7 @@ export class ReportAttachmentController {
     if (!job) throw new Error('job not found');
 
     if (job.type === JobType.REPORT_EMAIL) {
-      await this.sendReport(job);
+      await this.reportAttachmentService.startJobs(job);
     } else if (job.type === JobType.NO_REPORT_EMAIL) {
       await this.sendEmailOnly(job);
     }
@@ -198,3 +200,12 @@ export class ReportAttachmentController {
 export type Document = {
   fileName: string;
 };
+
+/**
+ * 1. sacar el procesamiento de los emails del request y emite un evento CLIENT_EMAIL_REPORT_REQUESTED por cada cliente en la lista de distru
+ * 2. el handler del evento genera todos los PDFs de de una vez y emite un evento por cada PDF generado CLIENT_EMAIL_REPORT_ATTACHMENT_GENERATED
+ * 2.1 si falla vuelve a emitir un event CLIENT_EMAIL_REPORT_REQUESTED, incrementa el retryAttempts y si llega a 3 falla, esto se guarda en la base de datos
+ * 3. el handler del evento CLIENT_EMAIL_REPORT_ATTACHMENT_GENERATED envía el email y emite un evento CLIENT_EMAIL_REPORT_ATTACHMENT_SENT
+ * 3.1 si esto falla vuelve a emitir un evento CLIENT_EMAIL_REPORT_ATTACHMENT_GENERATED, incrementa el retryAttempts y si llega a 3 falla, esto se guarda en la base de datos
+ * 4. el handler del evento CLIENT_EMAIL_REPORT_ATTACHMENT_SENT guarda en la base de datos el envio del email
+ */

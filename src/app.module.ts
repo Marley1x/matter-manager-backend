@@ -18,6 +18,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { EmailTemplateModule } from './modules/email-templates/email-template.module';
 import { ReportAttachmentModule } from './modules/report-attachment/report-attachment.module';
 import { DistributionListModule } from './modules/distribuition-list/distribution-list.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { DistributionListModule } from './modules/distribuition-list/distributio
     }),
     PrismaClient,
     ServicesModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [

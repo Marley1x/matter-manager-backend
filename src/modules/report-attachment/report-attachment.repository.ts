@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PdfJob, Prisma, PrismaClient } from '@prisma/client';
+import { EmailSendStatus, PdfJob, Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class ReportRepository {
@@ -64,8 +64,15 @@ export class ReportRepository {
       data: {
         pdfJob: { connect: { id: jobId } },
         client: { connect: { id: clientId } },
+        status: EmailSendStatus.REQUESTED,
         error,
       },
+    });
+  }
+  updateEmailSend(id: string, status: EmailSendStatus, error?: string) {
+    return this.prismaClient.emailSend.update({
+      data: { status, error },
+      where: { id },
     });
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable, StreamableFile } from '@nestjs/common';
 import { Client, Matter, MatterStatus } from '@prisma/client';
-import puppeteer from 'puppeteer';
 import { MatterRepository } from 'src/modules/matters/matters.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import * as JSZip from 'jszip';
