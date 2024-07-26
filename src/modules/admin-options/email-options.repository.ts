@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, PrismaClient, SmtpConfig } from '@prisma/client';
 
 @Injectable()
-export class EmailOptionsRepository {
+export class EmailOptionsRepostory {
   constructor(private readonly prismaClient: PrismaClient) {}
 
   async update(data: Prisma.SmtpConfigUpdateInput): Promise<SmtpConfig> {
