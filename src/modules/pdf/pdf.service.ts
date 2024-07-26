@@ -21,19 +21,35 @@ export class PdfService implements OnModuleInit {
   }
 
   async htmlToPDFBuffer(parameters: { html: string }): Promise<Buffer> {
-    await this.init();
-    const { html } = parameters;
-    const page = await this.browser.newPage();
-    await page.goto('about:blank');
-    await page.evaluate((html) => {
-      document.body.innerHTML = html;
-    }, html);
+    let page = null;
+    try {
+      console.log(`[${this.logContext}]: PDF_GEN - starting pdf generation`);
+      await this.init();
 
-    const pdfBuffer = await page.pdf({
-      width: 1200,
-      printBackground: true, // include background colors and images
-    });
-    await page.close();
-    return pdfBuffer;
+      const { html } = parameters;
+      console.log(`[${this.logContext}]: PDF_GEN - request new browser page`);
+      page = await this.browser.newPage();
+
+      console.log(`[${this.logContext}]: PDF_GEN - navigating to blank page`);
+      await page.goto('about:blank');
+
+      console.log(`[${this.logContext}]: PDF_GEN - setting page content`);
+      await page.evaluate((html) => {
+        document.body.innerHTML = html;
+      }, html);
+
+      console.log(`[${this.logContext}]: PDF_GEN - print pdf`);
+      const pdfBuffer = await page.pdf({
+        width: 1200,
+        printBackground: true, // include background colors and images
+      });
+
+      console.log(`[${this.logContext}]: PDF_GEN - request page close`);
+      return pdfBuffer;
+    } finally {
+      if (page) {
+        await page.close();
+      }
+    }
   }
 }
